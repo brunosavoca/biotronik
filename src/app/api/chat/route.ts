@@ -1,4 +1,4 @@
-`import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import OpenAI from "openai";
@@ -35,12 +35,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [
-        {
-          role: "system",
-          content: `Eres un asistente de IA específicamente diseñado para apoyar a cardiólogos licenciados en su práctica clínica.
+    const systemMessage = `Eres un asistente de IA específicamente diseñado para apoyar a cardiólogos licenciados en su práctica clínica.
 
 USUARIO ACTUAL:
 - Nombre: ${session.user.name}
@@ -82,7 +77,14 @@ IDIOMA:
 - Responde SIEMPRE en español
 - Usa terminología médica en español pero incluye términos en inglés entre paréntesis cuando sea necesario para claridad
 
-Enfócate en ser un colega cardiólogo conocedor que puede discutir casos, proporcionar referencias rápidas a guías y ofrecer información basada en evidencia para apoyar la toma de decisiones clínicas.`
+Enfócate en ser un colega cardiólogo conocedor que puede discutir casos, proporcionar referencias rápidas a guías y ofrecer información basada en evidencia para apoyar la toma de decisiones clínicas.`;
+
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: systemMessage
         },
         ...messages
       ],
