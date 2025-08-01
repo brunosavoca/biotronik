@@ -20,7 +20,7 @@ import {
   Building,
   Message,
   User,
-  Bot,
+  UserCircle,
   Cog
 } from "@mynaui/icons-react";
 
@@ -598,7 +598,7 @@ export default function ChatPage() {
                       </div>
                     ) : (
                       <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center shadow-lg">
-                        <Bot className="w-4 h-4 text-white" />
+                        <UserCircle className="w-4 h-4 text-white" />
                       </div>
                     )}
                   </div>
@@ -683,7 +683,7 @@ export default function ChatPage() {
               <div className="flex justify-start message-appear">
                 <div className="max-w-3xl flex items-end space-x-3">
                   <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center shadow-lg mr-3">
-                    <Bot className="w-4 h-4 text-white" />
+                                            <UserCircle className="w-4 h-4 text-white" />
                   </div>
                   <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl px-4 py-3 shadow-sm">
                     <div className="flex items-center space-x-3">

@@ -65,11 +65,11 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="space-y-4">
+          <div className="flex justify-center space-y-4">
             <Link href="/chat">
               <Button 
                 size="lg" 
-                className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-8 py-4 rounded-xl text-lg font-semibold shadow-lg hover:shadow-xl shadow-red-500/25 hover:shadow-red-500/40 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 flex items-center space-x-3"
+                className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-8 py-4 rounded-xl text-lg font-semibold shadow-lg hover:shadow-xl shadow-red-500/25 hover:shadow-red-500/40 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 flex items-center justify-center space-x-3 mx-auto"
               >
                 <Heart className="w-5 h-5" />
                 <span>Iniciar Consulta Médica</span>

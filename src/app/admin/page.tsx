@@ -15,9 +15,9 @@ import {
   Trash,
   Cog,
   Eye,
-  EyeOff,
+  EyeSlash,
   Users,
-  Crown,
+  Shield,
   Message
 } from "@mynaui/icons-react"
 
@@ -328,7 +328,7 @@ export default function AdminPage() {
           <div className="medical-card card-hover">
             <div className="flex items-center">
               <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mr-4">
-                <Crown className="w-6 h-6 text-white" />
+                <Shield className="w-6 h-6 text-white" />
               </div>
               <div>
                 <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Administradores</h3>
@@ -452,7 +452,7 @@ export default function AdminPage() {
                           size="sm"
                           className="text-yellow-600 hover:text-yellow-800"
                         >
-                          <EyeOff className="w-4 h-4 mr-1" />
+                          <EyeSlash className="w-4 h-4 mr-1" />
                           Desactivar
                         </Button>
                       ) : (
