@@ -57,8 +57,9 @@ export async function PUT(
   try {
     const session = await getServerSession(authOptions);
     
-    if (!session || (session.user.role !== UserRole.SUPERADMIN && session.user.role !== UserRole.ADMIN)) {
-      return NextResponse.json({ error: "No autorizado" }, { status: 403 });
+    // Solo SUPERADMIN puede editar usuarios
+    if (!session || session.user.role !== UserRole.SUPERADMIN) {
+      return NextResponse.json({ error: "Solo SUPERADMIN puede editar usuarios" }, { status: 403 });
     }
 
     const { id } = await params;

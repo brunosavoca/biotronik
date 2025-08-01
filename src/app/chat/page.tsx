@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useSession } from "next-auth/react";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
@@ -25,6 +26,8 @@ interface Conversation {
 }
 
 export default function ChatPage() {
+  const { data: session } = useSession();
+  
   // Estado principal
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
@@ -410,6 +413,13 @@ export default function ChatPage() {
                 >
                   Nueva conversación
                 </Button>
+              )}
+              {session && (session.user.role === "ADMIN" || session.user.role === "SUPERADMIN") && (
+                <Link href="/admin">
+                  <Button variant="outline" size="sm">
+                    🛠️ Admin
+                  </Button>
+                </Link>
               )}
               <Link href="/">
                 <Button variant="ghost" size="sm">

@@ -29,9 +29,23 @@ export default function AdminPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [createLoading, setCreateLoading] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
+  const [editLoading, setEditLoading] = useState(false)
+  const [editingUser, setEditingUser] = useState<User | null>(null)
 
   // Form state para crear usuario
   const [newUser, setNewUser] = useState({
+    name: "",
+    email: "",
+    password: "",
+    role: "USER",
+    specialty: "",
+    licenseNumber: "",
+    hospital: ""
+  })
+
+  // Form state para editar usuario
+  const [editUser, setEditUser] = useState({
     name: "",
     email: "",
     password: "",
@@ -134,6 +148,64 @@ export default function AdminPage() {
       }
     } catch (error) {
       console.error("Error eliminando usuario:", error)
+    }
+  }
+
+  const handleEditUser = (user: User) => {
+    setEditingUser(user)
+    setEditUser({
+      name: user.name,
+      email: user.email,
+      password: "", // Password field will be optional for updates
+      role: user.role,
+      specialty: user.specialty || "",
+      licenseNumber: user.licenseNumber || "",
+      hospital: user.hospital || ""
+    })
+    setShowEditModal(true)
+  }
+
+  const handleUpdateUser = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!editingUser) return
+
+    setEditLoading(true)
+
+    try {
+      const updateData = { ...editUser }
+      // Only include password if it's not empty
+      if (!updateData.password) {
+        delete updateData.password
+      }
+
+      const response = await fetch(`/api/admin/users/${editingUser.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updateData)
+      })
+
+      if (response.ok) {
+        setShowEditModal(false)
+        setEditingUser(null)
+        setEditUser({
+          name: "",
+          email: "",
+          password: "",
+          role: "USER",
+          specialty: "",
+          licenseNumber: "",
+          hospital: ""
+        })
+        loadUsers()
+      } else {
+        const error = await response.json()
+        alert(error.error || "Error al actualizar usuario")
+      }
+    } catch (error) {
+      console.error("Error actualizando usuario:", error)
+      alert("Error al actualizar usuario")
+    } finally {
+      setEditLoading(false)
     }
   }
 
@@ -316,6 +388,16 @@ export default function AdminPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
+                      {session?.user?.role === "SUPERADMIN" && (
+                        <Button
+                          onClick={() => handleEditUser(user)}
+                          variant="outline"
+                          size="sm"
+                          className="text-blue-600 hover:text-blue-800"
+                        >
+                          ✏️ Editar
+                        </Button>
+                      )}
                       {user.status === "ACTIVE" ? (
                         <Button
                           onClick={() => handleStatusChange(user.id, "INACTIVE")}
@@ -451,6 +533,132 @@ export default function AdminPage() {
                   className="bg-red-500 hover:bg-red-600 text-white"
                 >
                   {createLoading ? "Creando..." : "Crear Usuario"}
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit User Modal */}
+      {showEditModal && editingUser && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md">
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
+              Editar Usuario: {editingUser.name}
+            </h3>
+            <form onSubmit={handleUpdateUser} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Nombre completo
+                </label>
+                <Input
+                  type="text"
+                  required
+                  value={editUser.name}
+                  onChange={(e) => setEditUser({...editUser, name: e.target.value})}
+                  className="mt-1"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Email
+                </label>
+                <Input
+                  type="email"
+                  required
+                  value={editUser.email}
+                  onChange={(e) => setEditUser({...editUser, email: e.target.value})}
+                  className="mt-1"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Contraseña (dejar vacío para no cambiar)
+                </label>
+                <Input
+                  type="password"
+                  value={editUser.password}
+                  onChange={(e) => setEditUser({...editUser, password: e.target.value})}
+                  className="mt-1"
+                  placeholder="Nueva contraseña (opcional)"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Rol
+                </label>
+                <select
+                  value={editUser.role}
+                  onChange={(e) => setEditUser({...editUser, role: e.target.value})}
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                >
+                  <option value="USER">Usuario</option>
+                  <option value="ADMIN">Administrador</option>
+                  <option value="SUPERADMIN">Super Administrador</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Especialidad
+                </label>
+                <Input
+                  type="text"
+                  value={editUser.specialty}
+                  onChange={(e) => setEditUser({...editUser, specialty: e.target.value})}
+                  className="mt-1"
+                  placeholder="Cardiología, Medicina Interna, etc."
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Número de Licencia
+                </label>
+                <Input
+                  type="text"
+                  value={editUser.licenseNumber}
+                  onChange={(e) => setEditUser({...editUser, licenseNumber: e.target.value})}
+                  className="mt-1"
+                  placeholder="Número de licencia médica"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Hospital/Institución
+                </label>
+                <Input
+                  type="text"
+                  value={editUser.hospital}
+                  onChange={(e) => setEditUser({...editUser, hospital: e.target.value})}
+                  className="mt-1"
+                />
+              </div>
+              <div className="flex justify-end space-x-3 pt-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setShowEditModal(false)
+                    setEditingUser(null)
+                    setEditUser({
+                      name: "",
+                      email: "",
+                      password: "",
+                      role: "USER",
+                      specialty: "",
+                      licenseNumber: "",
+                      hospital: ""
+                    })
+                  }}
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={editLoading}
+                  className="bg-blue-500 hover:bg-blue-600 text-white"
+                >
+                  {editLoading ? "Actualizando..." : "Actualizar Usuario"}
                 </Button>
               </div>
             </form>

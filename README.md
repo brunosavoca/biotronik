@@ -38,7 +38,7 @@ Asistente de IA específicamente diseñado para cardiólogos, con una interfaz m
    ```
 
 7. **Open in browser:**
-   Navigate to [http://localhost:3000](http://localhost:3000)
+   Navigate to [`http://localhost:3000](http://localhost:3000)
 
 ### 👨‍💻 **Credenciales de Administrador**
 

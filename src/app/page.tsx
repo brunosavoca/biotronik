@@ -1,7 +1,12 @@
+"use client"
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { useSession } from "next-auth/react";
 
 export default function Home() {
+  const { data: session } = useSession();
+  
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950 flex flex-col">
       {/* Header */}
@@ -15,6 +20,22 @@ export default function Home() {
               <span className="text-lg font-medium text-gray-900 dark:text-white">
                 Biotronik
               </span>
+            </div>
+            <div className="flex items-center space-x-4">
+              {session && (session.user.role === "ADMIN" || session.user.role === "SUPERADMIN") && (
+                <Link href="/admin">
+                  <Button variant="outline" size="sm">
+                    🛠️ Admin
+                  </Button>
+                </Link>
+              )}
+              {session && (
+                <Link href="/chat">
+                  <Button variant="outline" size="sm">
+                    💬 Chat
+                  </Button>
+                </Link>
+              )}
             </div>
           </div>
         </div>
