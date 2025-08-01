@@ -82,10 +82,12 @@ export default function ChatPage() {
         setMessages([]);
         setInput("");
         setSelectedImages([]);
+        return data.conversation.id; // Retornar el ID de la conversación creada
       }
     } catch (error) {
       console.error("Error creando conversación:", error);
     }
+    return null;
   };
 
   // Cargar conversación específica
@@ -200,7 +202,10 @@ export default function ChatPage() {
 
   const sendMessageWithContent = async (messageContent: string) => {
     if (!currentConversationId) return;
-    
+    await sendMessageWithConversationId(messageContent, currentConversationId);
+  };
+
+  const sendMessageWithConversationId = async (messageContent: string, conversationId: string) => {
     const userMessage: Message = { 
       role: "user", 
       content: messageContent,
@@ -213,7 +218,7 @@ export default function ChatPage() {
     setIsLoading(true);
 
     // Guardar mensaje del usuario
-    await saveUserMessage(currentConversationId, userMessage);
+    await saveUserMessage(conversationId, userMessage);
 
     try {
       const response = await fetch("/api/chat", {
@@ -235,7 +240,7 @@ export default function ChatPage() {
               ]
             })
           })),
-          conversationId: currentConversationId
+          conversationId: conversationId
         }),
       });
 
@@ -248,7 +253,7 @@ export default function ChatPage() {
           timestamp: new Date()
         }]);
         // Actualizar título si es el primer mensaje
-        updateConversationTitle(currentConversationId, messageContent);
+        updateConversationTitle(conversationId, messageContent);
       } else {
         setMessages([...newMessages, { 
           role: "assistant", 
@@ -271,18 +276,23 @@ export default function ChatPage() {
   const sendMessage = async () => {
     if ((!input.trim() && selectedImages.length === 0) || isLoading) return;
 
+    const messageContent = input || "Analiza estas imágenes médicas";
+    let conversationId = currentConversationId;
+
     // Crear nueva conversación si no hay una activa
-    if (!currentConversationId) {
-      await createNewConversation();
-      // Esperamos un poco para que se complete la creación
-      setTimeout(() => {
-        sendMessageWithContent(input || "Analiza estas imágenes médicas");
-      }, 100);
-      return;
+    if (!conversationId) {
+      conversationId = await createNewConversation();
+      if (!conversationId) {
+        console.error("No se pudo crear la conversación");
+        return;
+      }
     }
 
-    sendMessageWithContent(input || "Analiza estas imágenes médicas");
+    // Limpiar input inmediatamente para mejor UX
     setInput("");
+
+    // Enviar el mensaje con el ID de conversación correcto
+    await sendMessageWithConversationId(messageContent, conversationId);
   };
 
   // Actualizar título de conversación
