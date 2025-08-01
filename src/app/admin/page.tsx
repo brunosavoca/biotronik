@@ -237,8 +237,8 @@ export default function AdminPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
-            <span className="text-white text-2xl font-bold">B</span>
+          <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center mx-auto mb-4 animate-pulse shadow-2xl">
+            <span className="text-white text-2xl">🏥</span>
           </div>
           <p className="text-gray-600 dark:text-gray-400">Cargando panel de administración...</p>
         </div>
@@ -253,8 +253,8 @@ export default function AdminPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center">
-                <span className="text-white text-lg font-bold">B</span>
+              <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg">
+                <span className="text-white text-lg">🏥</span>
               </div>
               <div>
                 <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
@@ -286,22 +286,53 @@ export default function AdminPage() {
       {/* Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow border border-gray-200 dark:border-gray-700">
-            <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Usuarios</h3>
-            <p className="text-2xl font-bold text-gray-900 dark:text-white">{users.length}</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div className="medical-card card-hover">
+            <div className="flex items-center">
+              <div className="w-12 h-12 bg-gradient-to-br from-gray-500 to-gray-600 rounded-xl flex items-center justify-center mr-4">
+                <span className="text-white text-lg">👥</span>
+              </div>
+              <div>
+                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Usuarios</h3>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{users.length}</p>
+              </div>
+            </div>
           </div>
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow border border-gray-200 dark:border-gray-700">
-            <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Activos</h3>
-            <p className="text-2xl font-bold text-green-600">{users.filter(u => u.status === "ACTIVE").length}</p>
+          
+          <div className="medical-card card-hover">
+            <div className="flex items-center">
+              <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center mr-4">
+                <span className="text-white text-lg">✅</span>
+              </div>
+              <div>
+                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Activos</h3>
+                <p className="text-2xl font-bold text-green-600">{users.filter(u => u.status === "ACTIVE").length}</p>
+              </div>
+            </div>
           </div>
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow border border-gray-200 dark:border-gray-700">
-            <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Administradores</h3>
-            <p className="text-2xl font-bold text-blue-600">{users.filter(u => u.role === "ADMIN" || u.role === "SUPERADMIN").length}</p>
+          
+          <div className="medical-card card-hover">
+            <div className="flex items-center">
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mr-4">
+                <span className="text-white text-lg">👨‍⚕️</span>
+              </div>
+              <div>
+                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Administradores</h3>
+                <p className="text-2xl font-bold text-blue-600">{users.filter(u => u.role === "ADMIN" || u.role === "SUPERADMIN").length}</p>
+              </div>
+            </div>
           </div>
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow border border-gray-200 dark:border-gray-700">
-            <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Conversaciones</h3>
-            <p className="text-2xl font-bold text-gray-900 dark:text-white">{users.reduce((acc, u) => acc + u._count.conversations, 0)}</p>
+          
+          <div className="medical-card card-hover">
+            <div className="flex items-center">
+              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mr-4">
+                <span className="text-white text-lg">💬</span>
+              </div>
+              <div>
+                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Conversaciones</h3>
+                <p className="text-2xl font-bold text-purple-600">{users.reduce((acc, u) => acc + u._count.conversations, 0)}</p>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -325,7 +356,7 @@ export default function AdminPage() {
         </div>
 
         {/* Users Table */}
-        <div className="bg-white dark:bg-gray-800 shadow rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div className="bg-white dark:bg-gray-800 shadow rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
               <thead className="bg-gray-50 dark:bg-gray-900">

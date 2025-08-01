@@ -14,8 +14,8 @@ export default function Home() {
         <div className="max-w-4xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
-                <span className="text-white text-sm font-semibold">B</span>
+              <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center shadow-lg">
+                <span className="text-white text-sm font-bold">🏥</span>
               </div>
               <span className="text-lg font-medium text-gray-900 dark:text-white">
                 Biotronik
@@ -45,13 +45,20 @@ export default function Home() {
       <main className="flex-1 flex items-center justify-center px-6">
         <div className="max-w-2xl mx-auto text-center">
           <div className="mb-8">
+            {/* Hero Logo */}
+            <div className="flex justify-center mb-6">
+              <div className="w-20 h-20 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center shadow-2xl shadow-red-500/25">
+                <span className="text-white text-2xl">🫀</span>
+              </div>
+            </div>
+            
             <h1 className="text-4xl md:text-5xl font-semibold text-gray-900 dark:text-white mb-4 tracking-tight">
-              <span className="text-red-500">Biotronik</span>
+              <span className="bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">Biotronik</span>
               <br />
               Asistente IA para Cardiólogos
             </h1>
             <p className="text-xl text-gray-600 dark:text-gray-400 leading-relaxed max-w-lg mx-auto">
-              Soporte avanzado de IA para medicina cardiovascular. Obtén información sobre diagnósticos, protocolos de tratamiento y guías clínicas.
+              Soporte avanzado de IA para medicina cardiovascular. Obtén información sobre diagnósticos, protocolos de tratamiento y guías clínicas basadas en evidencia.
             </p>
           </div>
 
@@ -59,9 +66,9 @@ export default function Home() {
             <Link href="/chat">
               <Button 
                 size="lg" 
-                className="bg-red-500 hover:bg-red-600 text-white px-8 py-3 rounded-xl text-base font-medium shadow-lg hover:shadow-xl transition-all duration-200 button-press"
+                className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-8 py-4 rounded-xl text-lg font-semibold shadow-lg hover:shadow-xl shadow-red-500/25 hover:shadow-red-500/40 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1"
               >
-                Iniciar Consulta
+                🩺 Iniciar Consulta Médica
               </Button>
             </Link>
           </div>

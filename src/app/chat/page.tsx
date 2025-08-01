@@ -37,6 +37,7 @@ export default function ChatPage() {
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
   const [copiedMessageIndex, setCopiedMessageIndex] = useState<number | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [isTyping, setIsTyping] = useState(false);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -216,6 +217,7 @@ export default function ChatPage() {
     const newMessages = [...messages, userMessage];
     setMessages(newMessages);
     setIsLoading(true);
+    setIsTyping(true);
 
     // Guardar mensaje del usuario
     await saveUserMessage(conversationId, userMessage);
@@ -269,6 +271,7 @@ export default function ChatPage() {
       }]);
     } finally {
       setIsLoading(false);
+      setIsTyping(false);
       setSelectedImages([]);
     }
   };
@@ -320,8 +323,20 @@ export default function ChatPage() {
 
   return (
     <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
+      {/* Mobile Overlay */}
+      {sidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+      
       {/* Sidebar */}
-      <div className={`${sidebarOpen ? 'w-80' : 'w-16'} bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 flex flex-col`}>
+      <div className={`${
+        sidebarOpen 
+          ? 'w-80 translate-x-0' 
+          : 'w-16 -translate-x-full lg:translate-x-0'
+      } fixed lg:relative inset-y-0 left-0 z-50 lg:z-auto bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 flex flex-col`}>
         {/* Header del sidebar */}
         <div className="p-4 border-b border-gray-200 dark:border-gray-700">
           <div className="flex items-center justify-between">
@@ -332,11 +347,17 @@ export default function ChatPage() {
               variant="ghost"
               size="sm"
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="p-2"
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
+              {sidebarOpen ? (
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              ) : (
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              )}
             </Button>
           </div>
           {sidebarOpen && (
@@ -394,9 +415,21 @@ export default function ChatPage() {
       {/* Chat principal */}
       <div className="flex-1 flex flex-col">
         {/* Header del chat */}
-        <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 px-6 py-3">
+        <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 px-4 lg:px-6 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
+              {/* Mobile menu button */}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setSidebarOpen(true)}
+                className="lg:hidden p-2 hover:bg-gray-100 dark:hover:bg-gray-700"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </Button>
+              
               <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
                 <span className="text-white text-sm font-bold">B</span>
               </div>
@@ -405,7 +438,7 @@ export default function ChatPage() {
                   Biotronik IA
                 </h1>
                 <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                   <span className="text-sm text-gray-500 dark:text-gray-400">En línea</span>
                 </div>
               </div>
@@ -547,22 +580,24 @@ export default function ChatPage() {
                 key={index}
                 className={`flex ${message.role === "user" ? "justify-end" : "justify-start"} message-appear`}
               >
-                <div className={`max-w-3xl flex ${message.role === "user" ? "flex-row-reverse" : "flex-row"} items-start space-x-3`}>
+                <div className={`max-w-3xl flex ${message.role === "user" ? "flex-row-reverse" : "flex-row"} items-end space-x-3`}>
                   {/* Avatar */}
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${message.role === "user" ? "ml-3" : "mr-3"}`}>
                     {message.role === "user" ? (
-                      <div className="w-8 h-8 bg-gray-600 dark:bg-gray-400 rounded-full flex items-center justify-center">
-                        <span className="text-white dark:text-gray-900 text-sm font-semibold">Dr</span>
+                      <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center shadow-lg">
+                        <span className="text-white text-xs">🩺</span>
                       </div>
                     ) : (
-                      <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
-                        <span className="text-white text-lg">♥</span>
+                      <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center shadow-lg">
+                        <span className="text-white text-xs">🤖</span>
                       </div>
                     )}
                   </div>
 
-                  {/* Mensaje */}
-                  <div className={`group relative ${message.role === "user" ? "bg-red-500 text-white" : "bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700"} rounded-2xl px-4 py-3 shadow-sm hover:shadow-md transition-shadow duration-200`}>
+                  {/* Mensaje Container */}
+                  <div className="flex flex-col space-y-1 max-w-[85%]">
+                    {/* Mensaje */}
+                    <div className={`group relative ${message.role === "user" ? "bg-gradient-to-br from-blue-500 to-blue-600 text-white" : "bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700"} rounded-2xl px-4 py-3 shadow-sm hover:shadow-md transition-all duration-200`}>
                     {/* Imágenes si las hay */}
                     {message.images && message.images.length > 0 && (
                       <div className="grid grid-cols-2 gap-2 mb-3">
@@ -624,26 +659,37 @@ export default function ChatPage() {
                         )}
                       </Button>
                     )}
+                    </div>
+                    
+                    {/* Timestamp */}
+                    <div className={`text-xs text-gray-500 dark:text-gray-400 px-2 ${message.role === "user" ? "text-right" : "text-left"}`}>
+                      {new Date(message.timestamp).toLocaleTimeString('es-ES', { 
+                        hour: '2-digit', 
+                        minute: '2-digit' 
+                      })}
+                    </div>
                   </div>
                 </div>
               </div>
             ))}
             
-            {/* Indicador de carga */}
-            {isLoading && (
-              <div className="flex justify-start">
-                <div className="max-w-3xl flex items-start space-x-3">
-                  <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
-                    <span className="text-white text-lg">♥</span>
+            {/* Typing Indicator */}
+            {isTyping && (
+              <div className="flex justify-start message-appear">
+                <div className="max-w-3xl flex items-end space-x-3">
+                  <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center shadow-lg mr-3">
+                    <span className="text-white text-xs">🤖</span>
                   </div>
-                  <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl px-4 py-3">
-                    <div className="flex items-center space-x-2">
+                  <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl px-4 py-3 shadow-sm">
+                    <div className="flex items-center space-x-3">
                       <div className="flex space-x-1">
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                        <div className="w-2 h-2 bg-red-400 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+                        <div className="w-2 h-2 bg-red-400 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+                        <div className="w-2 h-2 bg-red-400 rounded-full animate-bounce"></div>
                       </div>
-                      <span className="text-sm text-gray-500 dark:text-gray-400">Analizando...</span>
+                      <span className="text-sm text-gray-600 dark:text-gray-400 font-medium">
+                        Biotronik está escribiendo...
+                      </span>
                     </div>
                   </div>
                 </div>
