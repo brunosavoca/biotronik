@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useSession } from "next-auth/react";
+import { Building, Heart, Cog, Message } from "@mynaui/icons-react";
 
 export default function Home() {
   const { data: session } = useSession();
@@ -15,7 +16,7 @@ export default function Home() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center shadow-lg">
-                <span className="text-white text-sm font-bold">🏥</span>
+                <Building className="w-4 h-4 text-white" />
               </div>
               <span className="text-lg font-medium text-gray-900 dark:text-white">
                 Biotronik
@@ -24,15 +25,17 @@ export default function Home() {
             <div className="flex items-center space-x-4">
               {session && (session.user.role === "ADMIN" || session.user.role === "SUPERADMIN") && (
                 <Link href="/admin">
-                  <Button variant="outline" size="sm">
-                    🛠️ Admin
+                  <Button variant="outline" size="sm" className="flex items-center space-x-2">
+                    <Cog className="w-4 h-4" />
+                    <span>Admin</span>
                   </Button>
                 </Link>
               )}
               {session && (
                 <Link href="/chat">
-                  <Button variant="outline" size="sm">
-                    💬 Chat
+                  <Button variant="outline" size="sm" className="flex items-center space-x-2">
+                    <Message className="w-4 h-4" />
+                    <span>Chat</span>
                   </Button>
                 </Link>
               )}
@@ -48,7 +51,7 @@ export default function Home() {
             {/* Hero Logo */}
             <div className="flex justify-center mb-6">
               <div className="w-20 h-20 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center shadow-2xl shadow-red-500/25">
-                <span className="text-white text-2xl">🫀</span>
+                <Heart className="w-10 h-10 text-white" />
               </div>
             </div>
             
@@ -66,9 +69,10 @@ export default function Home() {
             <Link href="/chat">
               <Button 
                 size="lg" 
-                className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-8 py-4 rounded-xl text-lg font-semibold shadow-lg hover:shadow-xl shadow-red-500/25 hover:shadow-red-500/40 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1"
+                className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-8 py-4 rounded-xl text-lg font-semibold shadow-lg hover:shadow-xl shadow-red-500/25 hover:shadow-red-500/40 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 flex items-center space-x-3"
               >
-                🩺 Iniciar Consulta Médica
+                <Heart className="w-5 h-5" />
+                <span>Iniciar Consulta Médica</span>
               </Button>
             </Link>
           </div>

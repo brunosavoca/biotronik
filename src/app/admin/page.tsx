@@ -6,6 +6,20 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import Link from "next/link"
+import { 
+  Building,
+  User,
+  UserCheck, 
+  UserPlus, 
+  Edit,
+  Trash,
+  Cog,
+  Eye,
+  EyeOff,
+  Users,
+  Crown,
+  Message
+} from "@mynaui/icons-react"
 
 interface User {
   id: string
@@ -238,7 +252,7 @@ export default function AdminPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center mx-auto mb-4 animate-pulse shadow-2xl">
-            <span className="text-white text-2xl">🏥</span>
+            <Building className="w-8 h-8 text-white" />
           </div>
           <p className="text-gray-600 dark:text-gray-400">Cargando panel de administración...</p>
         </div>
@@ -254,7 +268,7 @@ export default function AdminPage() {
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg">
-                <span className="text-white text-lg">🏥</span>
+                <Building className="w-5 h-5 text-white" />
               </div>
               <div>
                 <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
@@ -290,7 +304,7 @@ export default function AdminPage() {
           <div className="medical-card card-hover">
             <div className="flex items-center">
               <div className="w-12 h-12 bg-gradient-to-br from-gray-500 to-gray-600 rounded-xl flex items-center justify-center mr-4">
-                <span className="text-white text-lg">👥</span>
+                <Users className="w-6 h-6 text-white" />
               </div>
               <div>
                 <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Usuarios</h3>
@@ -302,7 +316,7 @@ export default function AdminPage() {
           <div className="medical-card card-hover">
             <div className="flex items-center">
               <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center mr-4">
-                <span className="text-white text-lg">✅</span>
+                <UserCheck className="w-6 h-6 text-white" />
               </div>
               <div>
                 <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Activos</h3>
@@ -314,7 +328,7 @@ export default function AdminPage() {
           <div className="medical-card card-hover">
             <div className="flex items-center">
               <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mr-4">
-                <span className="text-white text-lg">👨‍⚕️</span>
+                <Crown className="w-6 h-6 text-white" />
               </div>
               <div>
                 <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Administradores</h3>
@@ -326,7 +340,7 @@ export default function AdminPage() {
           <div className="medical-card card-hover">
             <div className="flex items-center">
               <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mr-4">
-                <span className="text-white text-lg">💬</span>
+                <Message className="w-6 h-6 text-white" />
               </div>
               <div>
                 <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Conversaciones</h3>
@@ -351,7 +365,8 @@ export default function AdminPage() {
             onClick={() => setShowCreateModal(true)}
             className="ml-4 bg-red-500 hover:bg-red-600 text-white"
           >
-            + Nuevo Usuario
+            <UserPlus className="w-4 h-4 mr-2" />
+            Nuevo Usuario
           </Button>
         </div>
 
@@ -426,7 +441,8 @@ export default function AdminPage() {
                           size="sm"
                           className="text-blue-600 hover:text-blue-800"
                         >
-                          ✏️ Editar
+                          <Edit className="w-4 h-4 mr-1" />
+                        Editar
                         </Button>
                       )}
                       {user.status === "ACTIVE" ? (
@@ -436,6 +452,7 @@ export default function AdminPage() {
                           size="sm"
                           className="text-yellow-600 hover:text-yellow-800"
                         >
+                          <EyeOff className="w-4 h-4 mr-1" />
                           Desactivar
                         </Button>
                       ) : (
@@ -445,6 +462,7 @@ export default function AdminPage() {
                           size="sm"
                           className="text-green-600 hover:text-green-800"
                         >
+                          <Eye className="w-4 h-4 mr-1" />
                           Activar
                         </Button>
                       )}
@@ -455,6 +473,7 @@ export default function AdminPage() {
                           size="sm"
                           className="text-red-600 hover:text-red-800"
                         >
+                          <Trash className="w-4 h-4 mr-1" />
                           Eliminar
                         </Button>
                       )}
