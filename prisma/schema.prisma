@@ -38,6 +38,7 @@ model User {
   
   // Relaciones
   conversations Conversation[]
+  medicalForms  MedicalForm[]
   accounts      Account[]
   sessions      Session[]
   
@@ -112,4 +113,30 @@ model Message {
   conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
   
   @@map("messages")
+}
+
+model MedicalForm {
+  id                String   @id @default(cuid())
+  
+  // Información del paciente
+  patientName       String
+  patientAge        Int
+  
+  // Síntomas y signos vitales
+  symptoms          String   @db.Text
+  bloodPressure     String?
+  heartRate         String?
+  
+  // Antecedentes médicos
+  medicalHistory    String?  @db.Text
+  
+  // Información del médico que creó el formulario
+  userId            String
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Timestamps
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@map("medical_forms")
 }

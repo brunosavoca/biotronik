@@ -24,7 +24,7 @@ export default function Home() {
             </div>
             <div className="flex items-center space-x-3">
               <Link href="/">
-                <Button variant="outline" size="sm" className="flex items-center space-x-2">
+                <Button variant="outline" size="sm" className="flex items-center space-x-2 bg-red-50 border-red-200 text-red-700 hover:bg-red-100">
                   <Building className="w-4 h-4" />
                   <span>Biotronik</span>
                 </Button>
@@ -43,6 +43,15 @@ export default function Home() {
                   <span>Formulario</span>
                 </Button>
               </Link>
+              
+              {session && (
+                <Link href="/formularios">
+                  <Button variant="outline" size="sm" className="flex items-center space-x-2">
+                    <Heart className="w-4 h-4" />
+                    <span>Historial</span>
+                  </Button>
+                </Link>
+              )}
               
               {session && (session.user.role === "ADMIN" || session.user.role === "SUPERADMIN") && (
                 <Link href="/admin">
