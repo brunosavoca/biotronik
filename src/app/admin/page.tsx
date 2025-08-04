@@ -18,7 +18,8 @@ import {
   EyeSlash,
   Users,
   Shield,
-  Message
+  Message,
+  Heart
 } from "@mynaui/icons-react"
 
 interface User {
@@ -186,7 +187,7 @@ export default function AdminPage() {
     setEditLoading(true)
 
     try {
-      const updateData = { ...editUser }
+      const updateData: Partial<typeof editUser> = { ...editUser }
       // Only include password if it's not empty
       if (!updateData.password) {
         delete updateData.password
@@ -279,12 +280,35 @@ export default function AdminPage() {
                 </p>
               </div>
             </div>
-            <div className="flex items-center space-x-4">
-              <Link href="/chat">
-                <Button variant="outline" size="sm">
-                  💬 Chat
+            <div className="flex items-center space-x-3">
+              <Link href="/">
+                <Button variant="outline" size="sm" className="flex items-center space-x-2">
+                  <Building className="w-4 h-4" />
+                  <span>Biotronik</span>
                 </Button>
               </Link>
+              
+              <Link href="/chat">
+                <Button variant="outline" size="sm" className="flex items-center space-x-2">
+                  <Message className="w-4 h-4" />
+                  <span>Chat</span>
+                </Button>
+              </Link>
+              
+              <Link href="/formulario">
+                <Button variant="outline" size="sm" className="flex items-center space-x-2">
+                  <Heart className="w-4 h-4" />
+                  <span>Formulario</span>
+                </Button>
+              </Link>
+              
+              <Link href="/admin">
+                <Button variant="outline" size="sm" className="flex items-center space-x-2 bg-red-50 border-red-200 text-red-700 hover:bg-red-100">
+                  <Cog className="w-4 h-4" />
+                  <span>Admin</span>
+                </Button>
+              </Link>
+              
               <Button
                 onClick={() => signOut({ callbackUrl: "/auth/signin" })}
                 variant="outline"

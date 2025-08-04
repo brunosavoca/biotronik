@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth"
+import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
 import bcrypt from "bcryptjs"
 import { UserRole, UserStatus } from "@prisma/client"
@@ -8,7 +7,7 @@ import { UserRole, UserStatus } from "@prisma/client"
 // GET - Listar todos los usuarios (Solo SUPERADMIN y ADMIN)
 export async function GET() {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await auth()
     
     if (!session || (session.user.role !== UserRole.SUPERADMIN && session.user.role !== UserRole.ADMIN)) {
       return NextResponse.json({ error: "No autorizado" }, { status: 403 })
@@ -43,7 +42,7 @@ export async function GET() {
 // POST - Crear nuevo usuario (Solo SUPERADMIN y ADMIN)
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await auth()
     
     if (!session || (session.user.role !== UserRole.SUPERADMIN && session.user.role !== UserRole.ADMIN)) {
       return NextResponse.json({ error: "No autorizado" }, { status: 403 })

@@ -1,14 +1,14 @@
-import { NextAuthOptions } from "next-auth"
+import NextAuth from "next-auth"
 import { PrismaAdapter } from "@auth/prisma-adapter"
-import CredentialsProvider from "next-auth/providers/credentials"
+import Credentials from "@auth/core/providers/credentials"
 import bcrypt from "bcryptjs"
-import { prisma } from "./prisma"
+import { prisma } from "./lib/prisma"
 import { UserRole, UserStatus } from "@prisma/client"
 
-export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma) as any,
+export const { handlers, auth, signIn, signOut } = NextAuth({
+  adapter: PrismaAdapter(prisma),
   providers: [
-    CredentialsProvider({
+    Credentials({
       name: "credentials",
       credentials: {
         email: { label: "Email", type: "email" },
@@ -61,9 +61,9 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.role = (user as any).role
-        token.specialty = (user as any).specialty
-        token.hospital = (user as any).hospital
+        token.role = (user as { role: string; specialty?: string; hospital?: string }).role
+        token.specialty = (user as { role: string; specialty?: string; hospital?: string }).specialty
+        token.hospital = (user as { role: string; specialty?: string; hospital?: string }).hospital
       }
       return token
     },
@@ -80,6 +80,5 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: "/auth/signin",
     error: "/auth/error"
-  },
-  secret: process.env.NEXTAUTH_SECRET
-}
+  }
+}) 

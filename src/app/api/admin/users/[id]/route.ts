@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth"
+import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
 import bcrypt from "bcryptjs"
 import { UserRole, UserStatus } from "@prisma/client"
@@ -11,7 +10,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await auth()
     
     if (!session || (session.user.role !== UserRole.SUPERADMIN && session.user.role !== UserRole.ADMIN)) {
       return NextResponse.json({ error: "No autorizado" }, { status: 403 });
@@ -49,62 +48,32 @@ export async function GET(
   }
 }
 
-// PUT - Actualizar usuario
+// PUT - Actualizar usuario (Solo SUPERADMIN)
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await auth()
     
-    // Solo SUPERADMIN puede editar usuarios
     if (!session || session.user.role !== UserRole.SUPERADMIN) {
-      return NextResponse.json({ error: "Solo SUPERADMIN puede editar usuarios" }, { status: 403 });
+      return NextResponse.json({ error: "No autorizado" }, { status: 403 })
     }
 
-    const { id } = await params;
-    const { name, email, role, status, specialty, licenseNumber, hospital, password } = await request.json();
+    const { id } = await params
+    const { name, email, password, role, specialty, licenseNumber, hospital, status } = await request.json()
 
-    // Obtener usuario actual
-    const currentUser = await prisma.user.findUnique({
-      where: { id }
-    });
+    const updateData: Record<string, unknown> = {}
+    if (name) updateData.name = name
+    if (email) updateData.email = email
+    if (role) updateData.role = role
+    if (specialty !== undefined) updateData.specialty = specialty
+    if (licenseNumber !== undefined) updateData.licenseNumber = licenseNumber
+    if (hospital !== undefined) updateData.hospital = hospital
+    if (status) updateData.status = status
 
-    if (!currentUser) {
-      return NextResponse.json({ error: "Usuario no encontrado" }, { status: 404 })
-    }
-
-    // Solo SUPERADMIN puede modificar roles SUPERADMIN o ADMIN
-    if (role === UserRole.SUPERADMIN || role === UserRole.ADMIN || currentUser.role === UserRole.SUPERADMIN) {
-      if (session.user.role !== UserRole.SUPERADMIN) {
-        return NextResponse.json({ error: "Solo SUPERADMIN puede modificar administradores" }, { status: 403 })
-      }
-    }
-
-    // Prevenir que se modifique a sí mismo si es el último SUPERADMIN
-    if (currentUser.role === UserRole.SUPERADMIN && session.user.id === id) {
-      const superAdminCount = await prisma.user.count({
-        where: { role: UserRole.SUPERADMIN, status: UserStatus.ACTIVE }
-      })
-      
-      if (superAdminCount === 1 && (role !== UserRole.SUPERADMIN || status !== UserStatus.ACTIVE)) {
-        return NextResponse.json({ error: "No puedes desactivar o cambiar el rol del último SUPERADMIN" }, { status: 400 })
-      }
-    }
-
-    // Preparar datos de actualización
-    const updateData: any = {
-      name,
-      email,
-      role,
-      status,
-      specialty,
-      licenseNumber,
-      hospital
-    }
-
-    // Solo actualizar contraseña si se proporciona una nueva
-    if (password && password.length > 0) {
+    // Si se proporciona una nueva contraseña, hashearla
+    if (password) {
       updateData.password = await bcrypt.hash(password, 12)
     }
 
@@ -120,8 +89,7 @@ export async function PUT(
         specialty: true,
         licenseNumber: true,
         hospital: true,
-        createdAt: true,
-        lastLoginAt: true
+        createdAt: true
       }
     })
 
@@ -132,50 +100,30 @@ export async function PUT(
   }
 }
 
-// DELETE - Eliminar usuario
+// DELETE - Eliminar usuario (Solo SUPERADMIN)
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await auth()
     
     if (!session || session.user.role !== UserRole.SUPERADMIN) {
-      return NextResponse.json({ error: "Solo SUPERADMIN puede eliminar usuarios" }, { status: 403 });
+      return NextResponse.json({ error: "No autorizado" }, { status: 403 })
     }
 
-    const { id } = await params;
+    const { id } = await params
 
-    // Obtener usuario a eliminar
-    const userToDelete = await prisma.user.findUnique({
-      where: { id }
-    });
-
-    if (!userToDelete) {
-      return NextResponse.json({ error: "Usuario no encontrado" }, { status: 404 })
-    }
-
-    // Prevenir eliminar el último SUPERADMIN
-    if (userToDelete.role === UserRole.SUPERADMIN) {
-      const superAdminCount = await prisma.user.count({
-        where: { role: UserRole.SUPERADMIN, status: UserStatus.ACTIVE }
-      })
-      
-      if (superAdminCount === 1) {
-        return NextResponse.json({ error: "No puedes eliminar el último SUPERADMIN" }, { status: 400 })
-      }
-    }
-
-    // Prevenir auto-eliminación
-    if (session.user.id === id) {
-      return NextResponse.json({ error: "No puedes eliminarte a ti mismo" }, { status: 400 });
+    // No permitir eliminar el propio usuario
+    if (id === session.user.id) {
+      return NextResponse.json({ error: "No puedes eliminar tu propia cuenta" }, { status: 400 })
     }
 
     await prisma.user.delete({
       where: { id }
-    });
+    })
 
-    return NextResponse.json({ success: true })
+    return NextResponse.json({ message: "Usuario eliminado correctamente" })
   } catch (error) {
     console.error("Error al eliminar usuario:", error)
     return NextResponse.json({ error: "Error interno del servidor" }, { status: 500 })

@@ -21,7 +21,8 @@ import {
   Message,
   User,
   UserCircle,
-  Cog
+  Cog,
+  Heart
 } from "@mynaui/icons-react";
 
 interface Message {
@@ -114,7 +115,7 @@ export default function ChatPage() {
       
       if (response.ok) {
         setCurrentConversationId(conversationId);
-        setMessages(data.conversation.messages.map((msg: any) => ({
+        setMessages(data.conversation.messages.map((msg: { timestamp: string; [key: string]: unknown }) => ({
           ...msg,
           timestamp: new Date(msg.timestamp)
         })));
@@ -450,7 +451,7 @@ export default function ChatPage() {
                 </div>
               </div>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-3">
               {messages.length > 0 && (
                 <Button
                   onClick={() => {
@@ -459,12 +460,34 @@ export default function ChatPage() {
                   }}
                   variant="outline"
                   size="sm"
-                  className="hover:bg-gray-100 dark:hover:bg-gray-700 px-4 py-2 mr-2 border border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 transition-colors"
+                  className="hover:bg-gray-100 dark:hover:bg-gray-700 px-4 py-2 border border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 transition-colors"
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   Nueva conversación
                 </Button>
               )}
+              
+              <Link href="/">
+                <Button variant="outline" size="sm" className="flex items-center space-x-2">
+                  <Building className="w-4 h-4" />
+                  <span>Biotronik</span>
+                </Button>
+              </Link>
+              
+              <Link href="/chat">
+                <Button variant="outline" size="sm" className="flex items-center space-x-2 bg-red-50 border-red-200 text-red-700 hover:bg-red-100">
+                  <Message className="w-4 h-4" />
+                  <span>Chat</span>
+                </Button>
+              </Link>
+              
+              <Link href="/formulario">
+                <Button variant="outline" size="sm" className="flex items-center space-x-2">
+                  <Heart className="w-4 h-4" />
+                  <span>Formulario</span>
+                </Button>
+              </Link>
+              
               {session && (session.user.role === "ADMIN" || session.user.role === "SUPERADMIN") && (
                 <Link href="/admin">
                   <Button variant="outline" size="sm" className="flex items-center space-x-2">
@@ -473,11 +496,6 @@ export default function ChatPage() {
                   </Button>
                 </Link>
               )}
-              <Link href="/">
-                <Button variant="ghost" size="sm">
-                  ← Inicio
-                </Button>
-              </Link>
             </div>
           </div>
         </div>

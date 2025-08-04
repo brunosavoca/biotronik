@@ -22,20 +22,33 @@ export default function Home() {
                 Biotronik
               </span>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-3">
+              <Link href="/">
+                <Button variant="outline" size="sm" className="flex items-center space-x-2">
+                  <Building className="w-4 h-4" />
+                  <span>Biotronik</span>
+                </Button>
+              </Link>
+              
+              <Link href="/chat">
+                <Button variant="outline" size="sm" className="flex items-center space-x-2">
+                  <Message className="w-4 h-4" />
+                  <span>Chat</span>
+                </Button>
+              </Link>
+              
+              <Link href="/formulario">
+                <Button variant="outline" size="sm" className="flex items-center space-x-2">
+                  <Heart className="w-4 h-4" />
+                  <span>Formulario</span>
+                </Button>
+              </Link>
+              
               {session && (session.user.role === "ADMIN" || session.user.role === "SUPERADMIN") && (
                 <Link href="/admin">
                   <Button variant="outline" size="sm" className="flex items-center space-x-2">
                     <Cog className="w-4 h-4" />
                     <span>Admin</span>
-                  </Button>
-                </Link>
-              )}
-              {session && (
-                <Link href="/chat">
-                  <Button variant="outline" size="sm" className="flex items-center space-x-2">
-                    <Message className="w-4 h-4" />
-                    <span>Chat</span>
                   </Button>
                 </Link>
               )}
